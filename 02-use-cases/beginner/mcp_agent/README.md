@@ -20,7 +20,13 @@
 3. **部署 MCP 服务**：在火山 MCP Server 安装 [TOS MCP](https://www.volcengine.com/mcp-marketplace/detail?name=TOS%20MCP)
 
 ## 运行方法
-### 1. 配置环境变量
+### 1. 安装 veadk 和 agentkit python sdk 配置环境变量
+
+```bash
+uv pip install veadk-python
+uv pip install agentkit-sdk-python
+```
+
 在 `config.yaml` 中设置你的模型信息以及 TOS MCP：
 ```yaml
 model:
@@ -35,7 +41,39 @@ tool:
 
 ### 2. 运行本地客户端
 ```bash
+cd mcp_agent
 python agent.py
+```
+
+### 3. 运行veadk web客户端并使用浏览器登录 http://127.0.0.1:8000
+```bash
+cd ..
+veadk web
+```
+
+### 4. 部署到vefaas
+> **安全提示：请勿在生产环境中禁用密钥认证。确保 `VEFAAS_ENABLE_KEY_AUTH` 保持为 `true`（或不设置，默认为开启），并正确配置访问密钥和角色。只有在本地受控环境调试时，才可临时关闭认证，并务必加以警告。**
+
+```bash
+cd mcp_agent
+# 这一步直接运行即可
+export VEFAAS_ENABLE_KEY_AUTH=false
+# 这一步需要把YOUR_AK换成自己的ak
+export VOLCENGINE_ACCESS_KEY=YOUR_AK
+# 这一步需要把YOUR_AK换成自己的sk
+export VOLCENGINE_SECRET_KEY=YOUR_SK
+# 这一步部署应用到云上
+veadk deploy --vefaas-app-name=mcp-agent --use-adk-web --veapig-instance-name=<your veapig instance name> --iam-role "trn:iam::<your account id>:role/<your iam role name>"
+```
+
+### 5. 部署到 AgentKit 并且使用 client.py 测试
+
+```bash
+cd mcp_agent
+# Uncomment the following line in agent.py to run the agentkit app server
+# agent_server_app.run(host="0.0.0.0", port=8000)
+agentkit config
+agentkit launch
 ```
 
 ## 示例 Prompt

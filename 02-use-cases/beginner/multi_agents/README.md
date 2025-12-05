@@ -19,7 +19,13 @@
 3. **获取 AK、SK**：参考 [用户指南](https://www.volcengine.com/docs/6291/65568?lang=zh)获取火山引擎访问密钥
 
 ## 运行方法
-### 1. 配置环境变量
+### 1. 安装 veadk 和 agentkit python sdk 配置环境变量
+
+```bash
+uv pip install veadk-python
+uv pip install agentkit-sdk-python
+```
+
 在 `config.yaml` 中设置你的模型信息及 AK、SK：
 ```yaml
 model:
@@ -32,20 +38,41 @@ volcengine:
   secret_key: XXXX
 ```
 
-### 2. 运行智能体
-
-**方式一：使用 Web 界面调试**
+### 2. 运行本地客户端
 ```bash
-cd 02-use-cases/beginner
-veadk web
-# 在浏览器打开 http://127.0.0.1:8000
-# 在左上角选择 multi_agents 这个 agent，即可开始调试
+cd multi_agents
+python main.py
 ```
 
-**方式二：使用命令行**
+### 3. 运行veadk web客户端并使用浏览器登录 http://127.0.0.1:8000
 ```bash
-cd 02-use-cases/beginner
-python multi_agents/main.py
+cd ..
+veadk web
+```
+
+### 4. 部署到vefaas
+> **安全提示：请勿在生产环境中禁用密钥认证。确保 `VEFAAS_ENABLE_KEY_AUTH` 保持为 `true`（或不设置，默认为开启），并正确配置访问密钥和角色。只有在本地受控环境调试时，才可临时关闭认证，并务必加以警告。**
+
+```bash
+cd multi_agents
+# 这一步直接运行即可
+export VEFAAS_ENABLE_KEY_AUTH=false
+# 这一步需要把YOUR_AK换成自己的ak
+export VOLCENGINE_ACCESS_KEY=YOUR_AK
+# 这一步需要把YOUR_AK换成自己的sk
+export VOLCENGINE_SECRET_KEY=YOUR_SK
+# 这一步部署应用到云上
+veadk deploy --vefaas-app-name=multi-agents --use-adk-web --veapig-instance-name=<your veapig instance name> --iam-role "trn:iam::<your account id>:role/<your iam role name>"
+```
+
+### 5. 部署到 AgentKit 并且使用 client.py 测试
+
+```bash
+cd multi_agents
+# Uncomment the following line in main.py to run the agentkit app server
+# agent_server_app.run(host="0.0.0.0", port=8000)
+agentkit config
+agentkit launch
 ```
 
 ## 示例 Prompt

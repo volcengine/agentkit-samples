@@ -1,7 +1,10 @@
 from veadk import Runner
 from veadk.memory.short_term_memory import ShortTermMemory
-from multi_agents.agent import root_agent
+from agent import root_agent
 import asyncio
+
+# Deploy the agent as AgentkitAgentServerApp into the agentkit platform
+from agentkit.apps import AgentkitAgentServerApp
 
 app_name = "veadk_playground_app"
 user_id = "veadk_playground_user"
@@ -24,5 +27,14 @@ async def main():
     )
     print(response)
     
+
+agent_server_app = AgentkitAgentServerApp(
+    agent=root_agent,
+    short_term_memory=short_term_memory,
+)
+
 if __name__ == "__main__":
-    asyncio.run(main())
+    # asyncio.run(main())
+
+    # Uncomment the following line to run the agentkit app server
+    agent_server_app.run(host="0.0.0.0", port=8000)

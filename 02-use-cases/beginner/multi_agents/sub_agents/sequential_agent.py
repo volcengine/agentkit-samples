@@ -1,8 +1,8 @@
 from veadk.agents.sequential_agent import SequentialAgent
 from veadk import Runner
-from multi_agents.sub_agents.parallel_agent import parallel_get_info_agent
-from multi_agents.sub_agents.loop_agent import loop_refine_response_agent
-from multi_agents.prompts import SEQUENTIAL_SERVICE_AGENT_PROMPT
+from sub_agents.parallel_agent import parallel_get_info_agent
+from sub_agents.loop_agent import loop_refine_response_agent
+from prompts import SEQUENTIAL_SERVICE_AGENT_PROMPT
 
 sequential_service_agent = SequentialAgent(
     name="sequential_service_agent",

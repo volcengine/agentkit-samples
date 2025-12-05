@@ -1,6 +1,11 @@
+import sys
+from pathlib import Path
+current_dir = Path(__file__).parent
+sys.path.insert(0, str(current_dir))
+
 from veadk import Agent
-from multi_agents.sub_agents.sequential_agent import sequential_service_agent
-from multi_agents.prompts import CUSTOMER_SERVICE_AGENT_PROMPT, PRE_PROCESS_AGENT_PROMPT
+from sub_agents.sequential_agent import sequential_service_agent
+from prompts import CUSTOMER_SERVICE_AGENT_PROMPT, PRE_PROCESS_AGENT_PROMPT
 
 pre_process_agent = Agent(
     name="pre_process_agent",
