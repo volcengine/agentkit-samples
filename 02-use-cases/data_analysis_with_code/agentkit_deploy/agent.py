@@ -7,6 +7,14 @@ from dotenv import load_dotenv
 # 加载 settings.txt（dotenv 格式）
 load_dotenv(dotenv_path=str(Path(__file__).resolve().parent / "settings.txt"), override=False)
 
+# Import get_ark_token and set MODEL_AGENT_API_KEY environment variable
+from veadk.auth.veauth.ark_veauth import get_ark_token
+# Check if MODEL_AGENT_API_KEY environment variable exists and is not empty
+if "MODEL_AGENT_API_KEY" not in os.environ or not os.environ["MODEL_AGENT_API_KEY"]:
+    os.environ["MODEL_AGENT_API_KEY"] = get_ark_token()
+# Optionally assign to a variable for easier use in the file
+MODEL_AGENT_API_KEY = os.environ["MODEL_AGENT_API_KEY"]
+
 from veadk import Agent, Runner
 from veadk.a2a.agent_card import get_agent_card
 from google.adk.a2a.executor.a2a_agent_executor import A2aAgentExecutor
@@ -17,10 +25,9 @@ sys.path.append(str(Path(__file__).resolve().parent))
 from tools.catalog_discovery import catalog_discovery
 from tools.duckdb_sql_execution import duckdb_sql_execution
 from tools.lancedb_hybrid_execution import lancedb_hybrid_execution
-from tools.video_generation import generate_video_from_images
 from prompts import SYSTEM_PROMPT
-# Import memory management
 from veadk.memory.short_term_memory import ShortTermMemory
+from veadk.tools.builtin_tools.video_generate import video_generate
 from agentkit.apps import AgentkitAgentServerApp
 
 short_term_memory = ShortTermMemory(backend="local")
@@ -34,7 +41,7 @@ logging.basicConfig(
 # --- Logging Configuration ---
 logger = logging.getLogger(__name__)
 
-tools = [catalog_discovery, duckdb_sql_execution, lancedb_hybrid_execution, generate_video_from_images]
+tools = [catalog_discovery, duckdb_sql_execution, lancedb_hybrid_execution, video_generate]
 
 # 定义带记忆的 Agent 类
 class DataAnalysisAgent(Agent):

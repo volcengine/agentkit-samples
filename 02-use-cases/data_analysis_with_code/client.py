@@ -13,8 +13,8 @@ if __name__ == "__main__":
     app_name = "data_analysis_with_code"
     user_id = "agentkit_user"
     session_id = f"agentkit_sample_session"
-    base_url = "https://sd4t3oidukdd9dols8tlg.apigateway-cn-beijing.volceapi.com"
-    api_key = "NbCUqdEiEy0YkP9qNq0QHRnj5klQBMUVB51g"
+    base_url = ""
+    api_key = ""
     
    
     
@@ -41,7 +41,7 @@ if __name__ == "__main__":
         app_name=app_name,
         user_id=user_id,
         session_id=create_session(),
-        new_message=Content(parts=[Part(text="Life of Pi的电影海报生成视频")], role="user"),
+        new_message=Content(parts=[Part(text="Ang Lee的电影评分超过7分，有哪些电影海报包含动物")], role="user"),
         stream=True,
     )
 
@@ -62,6 +62,6 @@ if __name__ == "__main__":
                 print(line)
                 
     async def send_request_parallel():
-        tasks = [send_request("Life of Pi的电影海报生成视频") for _ in range(task_num)]
+        tasks = [send_request("Ang Lee的电影评分超过7分，有哪些电影海报包含动物") for _ in range(task_num)]
         await asyncio.gather(*tasks)
     asyncio.run(send_request_parallel())

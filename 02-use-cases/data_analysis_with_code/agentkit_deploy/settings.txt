@@ -1,2 +1,1 @@
 # Ark (OpenAI compatible)
-MODEL_AGENT_API_KEY=
