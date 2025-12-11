@@ -63,12 +63,21 @@ if knowledge_collection_name != "":
     # 使用用户指定的知识库
     knowledge = KnowledgeBase(backend="viking", index=knowledge_collection_name)
 else:
+    knowledge = KnowledgeBase(backend="viking", app_name=app_name)
+
+should_init_knowledge = False
+try:
+    test_knowledge = knowledge.search("商品退换策略", top_k=1)
+    should_init_knowledge = not(len(test_knowledge) >= 0 and test_knowledge[0].content != "" and str(test_knowledge[0].content).__contains__("商品退换策略"))
+except Exception as e:
+    should_init_knowledge = True
+
+if should_init_knowledge:
     tos_bucket_name = os.getenv("DATABASE_TOS_BUCKET")
     if not tos_bucket_name:
         raise ValueError("DATABASE_TOS_BUCKET environment variable is not set")
-    knowledge = KnowledgeBase(backend="viking", app_name=app_name)
     knowledge.add_from_directory(str(Path(__file__).resolve().parent) + "/pre_build/knowledge", 
-                                 tos_bucket_name=tos_bucket_name)
+                                    tos_bucket_name=tos_bucket_name)
 
 # 3. 配置长期记忆: 如果配置了Mem0，就使用Mem0，否则使用Viking，都不配置，默认创建一个Viking记忆库
 use_mem0 = os.getenv("DATABASE_MEM0_BASE_URL") and os.getenv("DATABASE_MEM0_API_KEY")
@@ -91,6 +100,10 @@ def before_agent_execution(callback_context: CallbackContext):
     # user_id = callback_context._invocation_context.user_id
     callback_context.state["user:customer_id"] = default_user_id
 
+# 这里仅做记忆保存的演示，实际根据需求选择会话保存到长期记忆中
+async def after_agent_execution(callback_context: CallbackContext):
+    session = callback_context._invocation_context.session
+    await long_term_memory.add_session_to_memory(session)
 
 after_sale_prompt = '''
 你是一名专业且耐心的在线客服，负责协助客户处理咨询及商品售后服务。可使用内部工具和知识库，但需严格遵守以下准则：
@@ -104,10 +117,11 @@ after_sale_prompt = '''
 6. 高效且准确地解决客户问题。
 
 <关于维修>
-1. 维修或售后咨询时，优先索取产品序列号，便于查询产品信息。
-2. 若客户忘记序列号，可先核验身份再查询购买记录确认商品信息， 可以通过客户姓名、邮箱 等信息进行核验。
-3. 详细询问故障情况，参考知识库内容引导客户完成基础排查，重点排除操作不当等简单问题。若故障可以通过简易步骤解决，应优先鼓励客户自行操作修复。
-4. 产品不在保修范围时，确认客户是否接受自费维修。
+1. 知识库中包含 手机、电视等商品的保修策略、售后政策、操作不当等常见问题的解决方案，客户问题必须要先查询知识库，是否有相关解决方案，参考已有案例引导客户排查 
+2. 涉及到具体商品的维修或售后咨询时，优先索取产品序列号，便于查询产品信息。
+3. 若客户忘记序列号，可先核验身份再查询购买记录确认商品信息， 可以通过客户姓名、邮箱 等信息进行核验。
+4. 详细询问故障情况，目前需要查询知识库内容的排查手册，来引导客户完成基础排查，重点排除操作不当等简单问题。若故障可以通过简易步骤解决，应优先鼓励客户自行操作修复。
+5. 产品不在保修范围时，确认客户是否接受自费维修。
 6. 创建维修单前，请确保完整收集必要信息（包括商品编号、故障描述、客户联系信息、维修时间等）。在正式提交前，需将全部信息发送给客户进行最终确认。
 7. 缺少必要信息时，礼貌询问客户补充。
 
@@ -115,7 +129,7 @@ after_sale_prompt = '''
 1. 保持耐心和礼貌，避免使用不专业用语和行为。
 2. 工具结果不能直接反馈给客户，需结合客户问题筛选、格式化并润色回复内容，确保清晰、准确、简洁。
 
-请根据上述要求，准确、简明且专业地回答客户问题，并积极协助解决售后问题。
+请根据上述要求，准确、简明且专业地回答客户问题，并积极协助解决售后问题。 同时，全程你被禁止使用知识库以外未经过认证的解决方案， 所有解决方案必须要先从知识库查询解决方案。
 
 当前登录客户为： {user:customer_id} 。
     ''' + "当前时间为：" + datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -135,6 +149,7 @@ after_sale_agent = Agent(
     long_term_memory=long_term_memory,
     tools=crm_tool,
     before_agent_callback=before_agent_execution,
+    after_agent_callback=after_agent_execution,
     run_processor=AuthRequestProcessor(),
 )
 
@@ -178,9 +193,11 @@ shopping_guide_agent = Agent(
     long_term_memory=long_term_memory,
     tools=[get_customer_info, get_customer_purchases],
     before_agent_callback=before_agent_execution,
+    after_agent_callback=after_agent_execution,
     instruction=shopping_guide_prompt,
     run_processor=AuthRequestProcessor(),
 )
+
 
 agent = Agent(
     name="customer_support_agent",
@@ -197,6 +214,7 @@ agent = Agent(
     ''',
     sub_agents=[after_sale_agent, shopping_guide_agent],
     long_term_memory=long_term_memory,
+    after_agent_callback=after_agent_execution,
 )
 
 runner = Runner(agent=agent, app_name=app_name)
