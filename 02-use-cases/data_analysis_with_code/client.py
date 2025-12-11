@@ -1,12 +1,3 @@
-'''
-Author: haoxingjun
-Date: 2025-12-11 03:40:10
-Email: haoxingjun@bytedance.com
-LastEditors: haoxingjun
-LastEditTime: 2025-12-11 11:41:12
-Description: file information
-Company: ByteDance
-'''
 import requests
 import httpx
 import random

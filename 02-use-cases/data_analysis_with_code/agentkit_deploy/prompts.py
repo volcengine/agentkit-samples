@@ -1,12 +1,3 @@
-'''
-Author: haoxingjun
-Date: 2025-12-11 02:45:35
-Email: haoxingjun@bytedance.com
-LastEditors: haoxingjun
-LastEditTime: 2025-12-11 13:30:40
-Description: file information
-Company: ByteDance
-'''
 import os
 
 SYSTEM_PROMPT = '''

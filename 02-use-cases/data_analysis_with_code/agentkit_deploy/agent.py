@@ -37,7 +37,7 @@ logger = logging.getLogger(__name__)
 tools = [catalog_discovery, duckdb_sql_execution, lancedb_hybrid_execution, generate_video_from_images]
 
 # 定义带记忆的 Agent 类
-class MemoryAgent(Agent):
+class DataAnalysisAgent(Agent):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
@@ -57,9 +57,9 @@ class MemoryAgent(Agent):
         return response
 
 # 创建带记忆的 Agent
-model_name = os.getenv("AGENT_MODEL_NAME", "doubao-seed-1-6-251015")  # 默认使用更主流的豆包模型
-root_agent = MemoryAgent(
-    description="LanceDB-based data retrieval agent supporting structured and vector queries.",
+model_name = os.getenv("MODEL_AGENT_NAME", "doubao-seed-1-6-251015")  # 默认使用更主流的豆包模型
+root_agent = DataAnalysisAgent(
+    description="基于LanceDB的数据检索Agent，支持结构化和向量查询。典型问题包括：1.你有哪些数据？2.给我一些样例数据？3.Ang Lee 评分超过7分的有哪些电影？4.Ang Lee 评分超过7分的电影中，有哪个电影海报中含有动物？5.Life of Pi 的电影海报，变成视频",
     instruction=SYSTEM_PROMPT,
     model_name=model_name,
     tools=tools,
