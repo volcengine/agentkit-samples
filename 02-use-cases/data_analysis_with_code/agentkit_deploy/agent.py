@@ -18,7 +18,7 @@ from tools.catalog_discovery import catalog_discovery
 from tools.duckdb_sql_execution import duckdb_sql_execution
 from tools.lancedb_hybrid_execution import lancedb_hybrid_execution
 from tools.video_generation import generate_video_from_images
-from tools.prompts import SYSTEM_PROMPT
+from prompts import SYSTEM_PROMPT
 # Import memory management
 from veadk.memory.short_term_memory import ShortTermMemory
 from agentkit.apps import AgentkitAgentServerApp
