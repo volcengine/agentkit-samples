@@ -64,7 +64,7 @@
 
 ### 1. 配置文件设置
 
-编辑 `data_analysis_with_code/agentkit_deploy/settings.txt` 文件，可选配置以下：
+编辑 `data_analysis_with_datalake/settings.txt` 文件，可选配置以下 or export these env variable instead.
 
 ```
 MODEL_AGENT_API_KEY=your_api_key_here
@@ -80,6 +80,10 @@ uv python install 3.12
 uv venv -p 3.12 .venv
 source .venv/bin/activate
 uv pip install -r requirements.txt
+
+# cli run
+adk run data_analysis_with_datalake
+#Prompt: what is data and list movies with score > 9 from director Francis Ford
 
 # veadk运行
 veadk web
