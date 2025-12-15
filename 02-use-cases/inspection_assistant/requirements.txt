@@ -1,0 +1,7 @@
+agentkit-sdk-python==0.1.15
+google-adk==1.18.0
+veadk-python==0.2.27
+veadk-python[extensions]==0.2.27
+tos>=2.8.7
+Pillow
+Flask

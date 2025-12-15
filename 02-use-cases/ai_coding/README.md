@@ -72,7 +72,7 @@ ai_coding/
 1. 登录 [火山引擎控制台](https://console.volcengine.com)
 2. 进入"访问控制" → "用户" -> 新建用户 或 搜索已有用户名 -> 点击用户名进入"用户详情" -> 进入"密钥" -> 新建密钥 或 复制已有的 AK/SK
    - 如下图所示
-   ![Volcengine AK/SK Management](../img/volcengine_aksk.jpg)
+   ![Volcengine AK/SK Management](../../assets/images/volcengine_aksk.jpg)
 3. 为用户配置 AgentKit运行所依赖服务的访问权限:
    - 在"用户详情"页面 -> 进入"权限" -> 点击"添加权限"，将以下策略授权给用户
    - `AgentKitFullAccess`（AgentKit 全量权限）
@@ -81,7 +81,7 @@ ai_coding/
    - 登陆[火山方舟控制台](https://console.volcengine.com/ark/region:ark+cn-beijing/overview?briefPage=0&briefType=introduce&type=new)
    - 进入"API Key管理" -> 创建 或 复制已有的 API Key，后续`MODEL_AGENT_API_KEY`环境变量需要配置为该值
    - 如下图所示
-   ![Ark API Key Management](../img/ark_api_key_management.jpg)
+   ![Ark API Key Management](../../assets/images/ark_api_key_management.jpg)
 5. 开通模型预置推理接入点
    - 登陆[火山方舟控制台](https://console.volcengine.com/ark/region:ark+cn-beijing/overview?briefPage=0&briefType=introduce&type=new)
    - 进入"开通管理" -> "语言模型" -> 找到相应模型 -> 点击"开通服务"
@@ -90,7 +90,7 @@ ai_coding/
         - `deepseek-v3-1-terminus`
         - `doubao-seed-code-preview-251028`
    - 如下图所示
-   ![Ark Model Service Management](../img/ark_model_service_management.jpg)
+   ![Ark Model Service Management](../../assets/images/ark_model_service_management.jpg)
 
 #### AgentKit 工具 ID
 
@@ -100,7 +100,7 @@ ai_coding/
    - 工具名称: `ai-coding-agent`
    - 描述: AI 编程助手工具
 4. 复制生成的工具 ID 用于配置（后续`AGENTKIT_TOOL_ID`环境变量需要配置为该值）, 如下图所示
-   ![AgentKit Sandbox Tool](../img/agentkit_sandbox_tool.jpg)
+   ![AgentKit Sandbox Tool](../../assets/images/agentkit_sandbox_tool.jpg)
 
 ### 安装依赖
 
