@@ -4,7 +4,7 @@ import os
 
 # Mock数据结构
 class Email:
-    def __init__(self, id: str, sender: str, subject: str, body: str, 
+    def __init__(self, id: str, sender: str, subject: str, body: str,
                  received_date: str, priority: str = "normal"):
         self.id = id
         self.sender = sender
@@ -12,7 +12,7 @@ class Email:
         self.body = body
         self.received_date = received_date
         self.priority = priority
-    
+
     def to_dict(self):
         return {
             "id": self.id,
@@ -41,13 +41,13 @@ def read_inbox(mailbox: str, unread_only: bool):
     """
     # 根据mailbox过滤邮件
     owner_emails = [Email(**email) for email in email_data.get(mailbox, [])]
-    
+
     emails = [{
         "id": email.id,
         "sender": email.sender,
         "subject": email.subject
     } for email in owner_emails]
-    
+
     result = {
         "success": True,
         "count": len(emails),
@@ -66,9 +66,9 @@ def read_email(mailbox: str, email_id: str):
     """
     # 根据mailbox过滤邮件
     owner_emails = [Email(**email) for email in email_data.get(mailbox, [])]
-    
+
     email = next((e for e in owner_emails if e.id == email_id), None)
-        
+
     if email:
         # 只返回邮件正文内容
         result = email.body
@@ -83,12 +83,12 @@ def classify_email(email_text: str, keywords: str):
         email_text (str): 邮件正文文本
     """
     classification = "urgent" if keywords in email_text else "normal"
-        
+
     result = {
         "success": True,
         "classification": classification,
         "message": f"成功分类邮件为 {classification} 优先级"
-    }    
+    }
 
     return result
 
@@ -102,7 +102,7 @@ def forward_email(mailbox: str, email_id: str, recipient: str):
     """
     # 根据mailbox过滤邮件
     owner_emails = [Email(**email) for email in email_data.get(mailbox, [])]
-    
+
     email = next((e for e in owner_emails if e.id == email_id), None)
     if not email:
         raise Exception("invalid email_id")
@@ -140,7 +140,7 @@ def generate_report(total: int, forwarded: int, receipient: str):
   - 目标邮箱: {receipient}
   - 执行状态: {'✅ 成功' if success else '❌ 失败'}
 """
-        
+
     result = {
         "success": True,
         "report": report,
@@ -163,4 +163,4 @@ class Colors:
     RED = '\033[91m'
     ENDC = '\033[0m'
     BOLD = '\033[1m'
-    UNDERLINE = '\033[4m'    
+    UNDERLINE = '\033[4m'

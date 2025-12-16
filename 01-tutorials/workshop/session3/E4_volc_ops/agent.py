@@ -65,4 +65,3 @@ ecs_agent: Agent = Agent(
 )
 
 root_agent = ecs_agent
-
