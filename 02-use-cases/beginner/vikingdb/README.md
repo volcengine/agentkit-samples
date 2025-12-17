@@ -201,6 +201,7 @@ agentkit config \
 --agent_name vikingdb_agnet \
 --entry_point 'agent.py' \
 --runtime_envs DATABASE_TOS_BUCKET=agentkit-platform-2107625663 \
+--runtime_envs DATABASE_VIKING_COLLECTION=agentkit_knowledge_app \
 --launch_type cloud
 
 # 启动云端服务

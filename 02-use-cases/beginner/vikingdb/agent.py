@@ -30,7 +30,10 @@ with open("/tmp/service_policy.txt", "w") as f:
     )
 
     # 创建知识库
-kb = KnowledgeBase(backend="viking", app_name="test_app")
+kb = KnowledgeBase(
+    backend="viking",
+    app_name=os.getenv("DATABASE_VIKING_COLLECTION", "agentkit_knowledge_app"),
+)
 kb.add_from_files(
     files=["/tmp/product_info.txt", "/tmp/service_policy.txt"],
     tos_bucket_name=os.environ.get("DATABASE_TOS_BUCKET"),

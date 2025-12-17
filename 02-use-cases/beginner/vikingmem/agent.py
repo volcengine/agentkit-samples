@@ -18,12 +18,12 @@ from agentkit.apps import AgentkitAgentServerApp
 from veadk import Agent, Runner
 from veadk.memory import LongTermMemory, ShortTermMemory
 
-vikingmem_app_name = os.getenv("VIKINGMEM_APP_NAME", "vikingmem_test_app")
+vikingmem_app_name = os.getenv("VIKINGMEM_APP_NAME", "vikingmem_agent_app")
 
 short_term_memory = ShortTermMemory()
 long_term_memory = LongTermMemory(backend="viking", index=vikingmem_app_name)
 root_agent = Agent(
-    name="test_agent",
+    name="vikingmem_agent",
     instruction="Use LoadMemory tool to search previous info.",
     long_term_memory=long_term_memory,
 )
@@ -31,7 +31,7 @@ root_agent = Agent(
 runner = Runner(
     agent=root_agent,
     short_term_memory=short_term_memory,
-    app_name="my_agent",
+    app_name="vikingmem_agent",
     user_id="user_id",
 )
 

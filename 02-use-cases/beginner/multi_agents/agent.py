@@ -5,6 +5,7 @@ from agentkit.apps import AgentkitAgentServerApp
 from veadk import Agent, Runner
 from veadk.memory.short_term_memory import ShortTermMemory
 
+
 # Add current directory to Python path to support sub_agents imports
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
@@ -17,13 +18,13 @@ short_term_memory = ShortTermMemory(
 
 pre_process_agent = Agent(
     name="pre_process_agent",
-    description="分析用户需求，提取关键信息",
+    description="星辰电商智能客服的需求分析师，负责识别问题类型、提取关键信息、生成处理策略",
     instruction=PRE_PROCESS_AGENT_PROMPT,
 )
 
 customer_service_agent = Agent(
     name="customer_service_agent",
-    description=("你是一个智能客服，根据用户需求，回答用户问题"),
+    description="星辰电商平台智能客服「小星」，热情专业地处理订单、物流、售后、会员等咨询",
     instruction=CUSTOMER_SERVICE_AGENT_PROMPT,
     sub_agents=[pre_process_agent, sequential_service_agent],
 )
