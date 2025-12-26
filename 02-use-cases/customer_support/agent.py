@@ -12,6 +12,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from tools.crm_mock import (
+    create_service_record,
+    delete_service_record,
+    get_customer_info,
+    get_customer_purchases,
+    get_service_records,
+    query_warranty,
+    update_service_record,
+)
 import datetime
 import logging
 import os
@@ -33,15 +42,6 @@ sys.path.append(str(Path(__file__).resolve().parent))
 # 上层目录
 sys.path.append(str(Path(__file__).resolve().parent.parent))
 
-from tools.crm_mock import (
-    create_service_record,
-    delete_service_record,
-    get_customer_info,
-    get_customer_purchases,
-    get_service_records,
-    query_warranty,
-    update_service_record,
-)
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -69,7 +69,8 @@ if knowledge_collection_name != "":
     # 使用用户指定的知识库
     knowledge = KnowledgeBase(backend="viking", index=knowledge_collection_name)
 else:
-    knowledge = KnowledgeBase(backend="viking", app_name=app_name)
+    raise ValueError("DATABASE_VIKING_COLLECTION environment variable is not set")
+
 
 should_init_knowledge = False
 try:
@@ -104,7 +105,9 @@ else:
             backend="viking", index=os.getenv("DATABASE_VIKINGMEM_COLLECTION")
         )
     else:
-        long_term_memory = LongTermMemory(backend="viking", top_k=3, app_name=app_name)
+        raise ValueError(
+            "DATABASE_VIKINGMEM_COLLECTION or DATABASE_MEM0_BASE_URL variable is not set"
+        )
 
 # 4. 导入crm 系统的函数工具
 crm_tool = [
