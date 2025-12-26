@@ -52,7 +52,7 @@ ccapi_mcp_toolset = McpToolset(
 
 agent: Agent = Agent(
     name="root_agent",
-    model_name="deepseek-v3-1-terminus",
+    model_name="deepseek-v3-2-251201",
     description="云资源管控智能体",
     instruction="你是一个云资源管控专家，擅长通过 CCAPI 管理各类云资源",
     knowledgebase=knowledgebase,

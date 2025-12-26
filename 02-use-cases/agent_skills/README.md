@@ -258,9 +258,21 @@ uv run client.py
 - 下载自己 tos 中的 skills 到 sandbox，需要在 `agentkit-platform-{your_account_id}` 这个 tos 存储桶中，`新建 skills 文件夹`，然后将需要的 skills 上传到这个文件夹
 - 如果需要下载自己 tos 中的一些文件，提示词中举例的 tos url 不可用，需要替换为自己的 tos url
 
+<style>
+table th:first-of-type {
+    width: 25%;
+}
+table th:nth-of-type(2) {
+    width: 25%;
+}
+table th:nth-of-type(3) {
+    width: 50%;
+}
+</style>
+
 | 是否使用 skills sandbox 中内置 skills | 产物是否上传 tos | 示例提示词 |
 | ----------------------------------- | -------------- | -------- |
-| 使用内置 skills | 产物不上传 tos | 使用 internal-comms skill 帮我写一个3p沟通材料，通知3p团队项目进度更新。关于产品团队，主要包括过去一周问题和未来一周计划，具体包括问题：写产品团队遇到的客户问题 (1. GPU+模型推理框架性能低于开源版本，比如时延高、吞吐低；2. GPU推理工具易用性差)，以及如何解决的；计划：明年如何规划GPU产品功能和性能优化 (1. 发力GPU基础设施对生图生视频模型的支持；2. GPU推理相关工具链路易用性提升)。其他内容，可以酌情组织。 |
+| 使用内置 skills | <div stype="width: 200px;"> 产物不上传 tos | 使用 internal-comms skill 帮我写一个3p沟通材料，通知3p团队项目进度更新。关于产品团队，主要包括过去一周问题和未来一周计划，具体包括问题：写产品团队遇到的客户问题 (1. GPU+模型推理框架性能低于开源版本，比如时延高、吞吐低；2. GPU推理工具易用性差)，以及如何解决的；计划：明年如何规划GPU产品功能和性能优化 (1. 发力GPU基础设施对生图生视频模型的支持；2. GPU推理相关工具链路易用性提升)。其他内容，可以酌情组织。 |
 | 使用内置 skills | 产物上传 tos | 请运行以下工作流程：1. 使用 canvas-design skill 帮我创作一件基于几何图形的艺术绘图。2. 使用 tos-file-access skill 把产物上传到存储桶 {YOUR_TOS_BUCKET_NAME} 里。 |
 | 下载自己 tos 中的 skills (注意，这里需要自己在 `agentkit-platform-{your_account_id}` bucket 中新建一个 skills 文件夹，并将需要的 skills，比如本例中的 `healthy-meal-planner` 上传到这个文件夹) | 产物不上传 tos | 我需要一个2人份的纯素高蛋白食谱，目标增肌。每周预算350元，喜欢30分钟内的快手菜。不喜欢蘑菇。使用 healthy-meal-planner skill 帮我制订一周的食谱。 |
 | 下载自己 tos 中的 skills (注意，这里需要自己在 `agentkit-platform-{your_account_id}` bucket 中新建一个 skills 文件夹，并将需要的 skills，比如本例中的 `healthy-meal-planner` 上传到这个文件夹) | 产物上传 tos | 请运行以下工作流程：1. 我需要一个2人份的纯素高蛋白食谱，目标增肌。每周预算350元，喜欢30分钟内的快手菜。不喜欢蘑菇。使用 healthy-meal-planner skill 帮我制订一周的食谱。2. 将制订好的食谱写入文件 recipe.md，然后使用 tos-file-access skill 把这个文件上传到存储桶 {YOUR_TOS_BUCKET_NAME}，最后把上传后的文件链接发给我。 |
@@ -271,6 +283,7 @@ uv run client.py
 
 | 示例提示词 | 效果截图 |
 | -------- | ------- |
+| 请运行以下工作流程：1. 使用 veadk-python skill ，写一个 VeADK Agent，能够通过提问 'hello' 来回复。2. 执行一下代码确保没问题；3. 将验证好的代码发给我。 | ![veadk skill 效果截图](assets/images/veadk-skill.png) |
 | 使用 internal-comms skill 帮我写一个3p沟通材料，通知3p团队项目进度更新。关于产品团队，主要包括过去一周问题和未来一周计划，具体包括问题：写产品团队遇到的客户问题 (1. GPU+模型推理框架性能低于开源版本，比如时延高、吞吐低；2. GPU推理工具易用性差)，以及如何解决的；计划：明年如何规划GPU产品功能和性能优化 (1. 发力GPU基础设施对生图生视频模型的支持；2. GPU推理相关工具链路易用性提升)。其他内容，可以酌情组织。 | ![internal-comms skill 效果截图](assets/images/internal-comms-skill.jpeg) |
 | 请运行以下工作流程：1. 使用 canvas-design skill 帮我创作一件基于几何图形的艺术绘图。2. 使用 tos-file-access skill 把产物上传到存储桶 {YOUR_TOS_BUCKET_NAME} 里。 | ![canvas-design skill 效果截图](assets/images/cavas-design-skill.jpeg) |
 | 我需要一个2人份的纯素高蛋白食谱，目标增肌。每周预算350元，喜欢30分钟内的快手菜。不喜欢蘑菇。使用 healthy-meal-planner skill 帮我制订一周的食谱。 | ![healthy-meal-planner skill 效果截图](assets/images/health-meal-planner-skill.jpeg) |
