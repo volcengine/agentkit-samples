@@ -25,9 +25,9 @@ def main() -> None:
 
     secret_key = os.environ.get("VOLCENGINE_SECRET_KEY", "")
     if not secret_key:
-        print("VOLCENGINE_SECRET_KEY is not set or empty")
+        print("VOLCENGINE_SECRET_KEY is not set or empty~~~")
     else:
-        print(f"VOLCENGINE_SECRET_KEY is set with length {len(secret_key)}")
+        print(f"VOLCENGINE_SECRET_KEY is set with length {len(secret_key)}~~~")
 
     changed = get_changed_files(base_sha, head_sha)
     changed_use_cases = [p for p in changed if p.startswith("02-use-cases/")]
