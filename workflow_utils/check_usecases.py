@@ -64,9 +64,6 @@ def main() -> None:
             continue
 
         agent_name = d.name
-        workflow_name = os.environ.get("GITHUB_WORKFLOW", "")
-        if workflow_name == "agentkit-check":
-            agent_name = f"check_{agent_name}"
         print(f"Running 'agentkit config' in {d} for agent_name={agent_name}")
         config_cmd = [
             "agentkit",
@@ -81,6 +78,10 @@ def main() -> None:
             "cloud",
             "--image_tag",
             "v1.0.0",
+            "--cr_repo_name",
+            agent_name,
+            "--runtime_name",
+            agent_name,
             "--region",
             "cn-beijing",
         ]
