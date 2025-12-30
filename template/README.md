@@ -1,5 +1,44 @@
 # AgentKit 样例模板
 
+您提交的样例应当在 README.md 中添加 Yaml 格式的元数据，用于描述您的样例，具体内容包括：
+
+```markdown
+---
+name:                     # 中文名称（255字符）
+name_en:                  # 英文名称（255字符）
+description:              # 简介（10-20字）
+details:                  # 详细介绍（10-40字）
+type:                     # 类型，可选项为 tutorial | application
+senarios:                 # 应用场景（2-6个），type 为 application 时必填
+    - name:               # 应用场景名称（2-15字）
+    desc:                 # 应用场景描述（10-20字）
+    - name:
+    desc:
+prompts:                  # Prompt 样例
+    - text:               # Prompt 文本（简洁精炼）
+      resource_url:       # 必要的多模态数据 URL（公网可访问）
+    - prompt:
+      resource_url:
+envs:                     # 所需的环境变量（用于第三方依赖服务）
+    - name:               # 环境变量中文名
+      key:                # 环境变量名
+      url:                # 引导链接
+components:               # Agentkit 依赖服务
+    - type:               # 服务类型，可选项为 tool | knowledgebase | memory
+      # 对应产品（不区分大小写）
+      # tool: AIO_Sandbox | Skills_Sandbox
+      # knowledgebase: VikingKnowledge
+      # memory: VikingMem | Mem0
+      product:
+models:                   # 涉及到的具体模型列表
+    - doubao-seed-1-8-251215
+---
+
+# Markdown 正文
+
+...
+```
+
 > 您向 `agentkit-samples` 项目提交的样例，需要符合以下目录结构，并保证内容完整：
 >
 > ```bash
