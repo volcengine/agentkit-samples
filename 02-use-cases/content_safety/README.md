@@ -8,9 +8,9 @@ senarios:
   - 教育科研数据分析
 components:
   - name: Identity
-    desc: 提供访问 Agent 所需的身份与鉴权配置
+    desc: this fake, remove it later
   - name: MCP Toolset
-    desc: 通过 CCAPI 等 MCP 工具访问云资源与运维能力
+    desc: this fake, remove it later
 ---
 
 # Content Safety Agent - 具备内容安全审核的 Agent
