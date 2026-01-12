@@ -180,7 +180,7 @@ RUNTIME_IAM_ROLE_TRN=trn:iam::<account_id>:role/<role_name>
    > ```
    > https://auth.id.cn-beijing.volces.com/api/v1/oauth2callback
    > ```
-![alt text](image.png)
+![alt text](images/image.png)
 4. **⚠️ 添加文档访问权限（关键步骤！）**
 
    进入「权限管理」→ 搜索并申请以下权限：
@@ -216,7 +216,7 @@ RUNTIME_IAM_ROLE_TRN=trn:iam::<account_id>:role/<role_name>
    | 服务商 | 飞书 | 选择飞书 |
    | Client ID | 步骤1获取的 App ID | 从飞书应用凭证复制 |
    | Client Secret | 步骤1获取的 App Secret | 从飞书应用凭证复制 |
-![alt text](image-1.png)
+![alt text](images/image-1.png)
 3. **⚠️ 配置关键参数（避坑重点！）**
 
    | 字段 | 正确配置 | 说明 |
@@ -229,13 +229,13 @@ RUNTIME_IAM_ROLE_TRN=trn:iam::<account_id>:role/<role_name>
    > 🚨 **常见错误**：
    > - ❌ 回调 URL 设为 Runtime 的 URL（如 `https://xxx.apigateway-cn-beijing.volceapi.com/...`）
    > - ❌ 权限范围使用 `openid`、`profile` 等标准 OIDC scope（飞书不支持）
-![alt text](image-2.png)
+![alt text](images/image-2.png)
 4. **验证配置**
 
    点击「测试」按钮验证 OAuth 流程：
    - ✅ 成功：能跳转到飞书授权页，授权后能获取 Token
    - ❌ 失败：检查回调 URL 和权限范围配置
-![alt text](image-3.png)
+![alt text](images/image-3.png)
 5. **保存配置**
 
    记住凭证提供者名称（如 `feishu`），后续配置时需要使用。
@@ -378,9 +378,9 @@ flowchart LR
 # 清理凭证（如需重新授权测试）
 清理我的身份凭据
 ```
-![alt text](image-8.png)
-![alt text](image-9.png)
-![alt text](image-10.png)
+![alt text](images/image-8.png)
+![alt text](images/image-9.png)
+![alt text](images/image-10.png)
 
 ## 常见问题排查
 

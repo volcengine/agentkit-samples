@@ -24,7 +24,7 @@
 ## Agent Identity 解决方案
 
 Agent Identity 专为解决上述问题设计，它不是简单的 OAuth 包装，而是为智能体构建的一套完整的**身份治理基础设施**。
-![alt text](image.png)
+![alt text](images/image.png)
 Agent Identity 把“用户 → 应用 → Agent → 资源”的链路拆开治理，并提供一套可复用的安全构件：
 
 - **Inbound 认证**：对接企业现有 IdP（用户池 / OAuth / SSO 等），让“谁能调用 Agent”可配置、可审计。

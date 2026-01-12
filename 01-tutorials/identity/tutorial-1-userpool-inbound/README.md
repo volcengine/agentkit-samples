@@ -106,7 +106,7 @@ flowchart TB
    - 选择登录属性：用户名 + 手机号
    - 点击「确认」
 
-![新建用户池](image-2.png)
+![新建用户池](images/image-2.png)
 
 3. **新建客户端**
    - 进入用户池详情 → 点击「新建客户端」
@@ -115,13 +115,13 @@ flowchart TB
    - 回调地址：`http://127.0.0.1:8000/api/v1/oauth2callback`
    - **记录 Client ID 和 Client Secret**
 
-![新建客户端](image-3.png)
+![新建客户端](images/image-3.png)
 
 4. **创建测试用户**
    - 在用户池中选择「用户管理」→「新建用户」
    - 设置用户名和临时密码
 
-![创建测试用户](image-4.png)
+![创建测试用户](images/image-4.png)
 
 ### 步骤2: 配置环境变量
 
@@ -167,8 +167,8 @@ uv run veadk web
 5. **授权确认** - 允许应用访问您的信息
 6. **进入应用** - 登录成功，可以开始使用 Agent
 
-![登录页面](image-5.png)
-![登录成功](image-6.png)
+![登录页面](images/image-5.png)
+![登录成功](images/image-6.png)
 
 ```mermaid
 flowchart LR
