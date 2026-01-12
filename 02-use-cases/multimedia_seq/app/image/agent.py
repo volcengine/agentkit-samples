@@ -11,8 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import time
-
 from veadk import Agent
 
 from veadk.config import getenv
@@ -21,6 +19,7 @@ from app.image.hook import hook_url_id_mapping
 from app.image.schema import max_output_tokens_config
 from app.image.tools.image_generate_gather import image_generate
 from app.image.prompt import PROMPT_IMAGE_AGENT
+from app.model import ArkLlm
 
 
 def get_image_agent():
@@ -38,8 +37,13 @@ def get_image_agent():
                 "caching": {
                     "type": "disabled",
                 },
-                "expire_at": int(time.time()) + 259200,
             }
         },
+    )
+    image_agent.model = ArkLlm(
+        model=f"{image_agent.model_provider}/{image_agent.model_name}",
+        api_key=image_agent.model_api_key,
+        api_base=image_agent.model_api_base,
+        **image_agent.model_extra_config,
     )
     return image_agent

@@ -11,8 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import time
-
 from veadk import Agent
 from veadk.config import getenv
 
@@ -22,6 +20,7 @@ from app.storyboard.schema import (
 )
 
 from app.storyboard.prompt import PROMPT_STORYBOARD_AGENT
+from app.model import ArkLlm
 
 
 def get_storyboard_agent():
@@ -39,9 +38,14 @@ def get_storyboard_agent():
                 "caching": {
                     "type": "disabled",
                 },
-                "expire_at": int(time.time()) + 259200,
             }
         },
     )
 
+    storyboard_agent.model = ArkLlm(
+        model=f"{storyboard_agent.model_provider}/{storyboard_agent.model_name}",
+        api_key=storyboard_agent.model_api_key,
+        api_base=storyboard_agent.model_api_base,
+        **storyboard_agent.model_extra_config,
+    )
     return storyboard_agent

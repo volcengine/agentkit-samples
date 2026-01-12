@@ -13,7 +13,6 @@
 # limitations under the License.
 
 import os
-import time
 from typing import Literal
 
 from veadk import Agent
@@ -21,6 +20,7 @@ from veadk import Agent
 from app.eval.hook import hook_url_id_mapping
 from app.eval.prompt import PROMPT_EVALUATE_AGENT
 from app.eval.tools.geval import evaluate_media
+from app.model import ArkLlm
 
 
 def get_eval_agent(eval_type: Literal["image", "video"]):
@@ -37,8 +37,13 @@ def get_eval_agent(eval_type: Literal["image", "video"]):
                 "caching": {
                     "type": "disabled",
                 },
-                "expire_at": int(time.time()) + 259200,
             }
         },
+    )
+    eval_agent.model = ArkLlm(
+        model=f"{eval_agent.model_provider}/{eval_agent.model_name}",
+        api_key=eval_agent.model_api_key,
+        api_base=eval_agent.model_api_base,
+        **eval_agent.model_extra_config,
     )
     return eval_agent

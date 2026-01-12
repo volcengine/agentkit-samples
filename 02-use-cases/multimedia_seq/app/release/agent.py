@@ -13,7 +13,6 @@
 # limitations under the License.
 
 import os
-import time
 
 from veadk import Agent
 
@@ -21,6 +20,7 @@ from app.release.hook import hook_tool_execute
 from app.release.prompt import PROMPT_RELEASE_AGENT
 from app.release.tools.upload import upload_file_to_tos
 from app.release.tools.video_combine import video_combine
+from app.model import ArkLlm
 
 
 def get_release_agent() -> Agent:
@@ -36,9 +36,14 @@ def get_release_agent() -> Agent:
                 "caching": {
                     "type": "disabled",
                 },
-                "expire_at": int(time.time()) + 259200,
             }
         },
     )
 
+    agent.model = ArkLlm(
+        model=f"{agent.model_provider}/{agent.model_name}",
+        api_key=agent.model_api_key,
+        api_base=agent.model_api_base,
+        **agent.model_extra_config,
+    )
     return agent

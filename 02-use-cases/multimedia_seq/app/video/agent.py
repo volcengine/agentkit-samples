@@ -13,7 +13,6 @@
 # limitations under the License.
 
 import os
-import time
 
 from google.genai import types
 from veadk import Agent
@@ -22,6 +21,7 @@ from veadk import Agent
 from app.video.tools.video_generate_by_code import video_generate
 from app.video.hook import hook_short_image_url_to_long, hook_url_id_mapping
 from app.video.prompt import PROMPT_VIDEO_AGENT
+from app.model import ArkLlm
 
 max_output_tokens_config = types.GenerateContentConfig(max_output_tokens=18000)
 
@@ -42,8 +42,13 @@ def get_video_agent():
                 "caching": {
                     "type": "disabled",
                 },
-                "expire_at": int(time.time()) + 259200,
             },
         },
+    )
+    video_agent.model = ArkLlm(
+        model=f"{video_agent.model_provider}/{video_agent.model_name}",
+        api_key=video_agent.model_api_key,
+        api_base=video_agent.model_api_base,
+        **video_agent.model_extra_config,
     )
     return video_agent
