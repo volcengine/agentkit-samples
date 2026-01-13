@@ -39,6 +39,31 @@
 # ============================================================
 import sys
 
+# ============================================================
+# 正常的导入和代码
+# ============================================================
+
+import json
+import os
+from pathlib import Path
+from typing import Any
+
+import httpx
+from dotenv import load_dotenv
+
+from veadk import Agent
+from veadk.integrations.ve_identity import (
+    AuthRequestProcessor,
+    VeIdentityFunctionTool,
+    oauth2_auth,
+)
+from veadk.integrations.ve_identity.auth_mixins import OAuth2AuthMixin
+from google.adk.tools.function_tool import FunctionTool
+from google.adk.tools.tool_context import ToolContext
+
+load_dotenv(Path(__file__).parent / ".env")
+
+
 def _patched_patch_google_adk_telemetry():
     """修复版本的 patch_google_adk_telemetry，避免 RuntimeError"""
     try:
@@ -52,7 +77,9 @@ def _patched_patch_google_adk_telemetry():
             for attr_name in dir(mod):
                 try:
                     obj = getattr(mod, attr_name, None)
-                    if isinstance(obj, type) and issubclass(obj, (CallbackContext, ToolContext)):
+                    if isinstance(obj, type) and issubclass(
+                        obj, (CallbackContext, ToolContext)
+                    ):
                         if not hasattr(obj, "_veadk_span"):
                             obj._veadk_span = property(
                                 lambda self: getattr(self.state, "_veadk_span", None),
@@ -61,35 +88,13 @@ def _patched_patch_google_adk_telemetry():
                 except (TypeError, AttributeError):
                     pass
 
+
 try:
     import veadk.utils.patches
+
     veadk.utils.patches.patch_google_adk_telemetry = _patched_patch_google_adk_telemetry
 except ImportError:
     pass
-
-# ============================================================
-# 正常的导入和代码
-# ============================================================
-
-import json
-import os
-from pathlib import Path
-from typing import Any
-
-import httpx
-from dotenv import load_dotenv
-
-load_dotenv(Path(__file__).parent / ".env")
-
-from veadk import Agent
-from veadk.integrations.ve_identity import (
-    AuthRequestProcessor,
-    VeIdentityFunctionTool,
-    oauth2_auth,
-)
-from veadk.integrations.ve_identity.auth_mixins import OAuth2AuthMixin
-from google.adk.tools.function_tool import FunctionTool
-from google.adk.tools.tool_context import ToolContext
 
 # 从环境变量读取凭证提供者名称
 GITHUB_CREDENTIAL_PROVIDER = os.getenv("GITHUB_CREDENTIAL_PROVIDER", "github_oauth")
@@ -101,6 +106,7 @@ print(f"[CONFIG] FEISHU_CREDENTIAL_PROVIDER={FEISHU_CREDENTIAL_PROVIDER}")
 # ============================================================
 # GitHub API 工具
 # ============================================================
+
 
 async def github_get_user(*, access_token: str) -> str:
     """
@@ -129,17 +135,21 @@ async def github_get_user(*, access_token: str) -> str:
                 return f"GitHub API 错误: {response.status_code} - {response.text}"
 
             user_data = response.json()
-            return json.dumps({
-                "login": user_data.get("login"),
-                "name": user_data.get("name"),
-                "email": user_data.get("email"),
-                "bio": user_data.get("bio"),
-                "public_repos": user_data.get("public_repos"),
-                "followers": user_data.get("followers"),
-                "following": user_data.get("following"),
-                "created_at": user_data.get("created_at"),
-                "html_url": user_data.get("html_url"),
-            }, indent=2, ensure_ascii=False)
+            return json.dumps(
+                {
+                    "login": user_data.get("login"),
+                    "name": user_data.get("name"),
+                    "email": user_data.get("email"),
+                    "bio": user_data.get("bio"),
+                    "public_repos": user_data.get("public_repos"),
+                    "followers": user_data.get("followers"),
+                    "following": user_data.get("following"),
+                    "created_at": user_data.get("created_at"),
+                    "html_url": user_data.get("html_url"),
+                },
+                indent=2,
+                ensure_ascii=False,
+            )
 
     except Exception as e:
         return f"获取用户信息出错: {str(e)}"
@@ -178,16 +188,18 @@ async def github_list_repos(*, access_token: str) -> str:
             repos = response.json()
             result = []
             for repo in repos:
-                result.append({
-                    "name": repo.get("name"),
-                    "full_name": repo.get("full_name"),
-                    "description": repo.get("description"),
-                    "private": repo.get("private"),
-                    "html_url": repo.get("html_url"),
-                    "language": repo.get("language"),
-                    "stargazers_count": repo.get("stargazers_count"),
-                    "updated_at": repo.get("updated_at"),
-                })
+                result.append(
+                    {
+                        "name": repo.get("name"),
+                        "full_name": repo.get("full_name"),
+                        "description": repo.get("description"),
+                        "private": repo.get("private"),
+                        "html_url": repo.get("html_url"),
+                        "language": repo.get("language"),
+                        "stargazers_count": repo.get("stargazers_count"),
+                        "updated_at": repo.get("updated_at"),
+                    }
+                )
 
             return json.dumps(result, indent=2, ensure_ascii=False)
 
@@ -224,21 +236,25 @@ async def github_get_repo(owner: str, repo: str, *, access_token: str) -> str:
                 return f"GitHub API 错误: {response.status_code} - {response.text}"
 
             repo_data = response.json()
-            return json.dumps({
-                "name": repo_data.get("name"),
-                "full_name": repo_data.get("full_name"),
-                "description": repo_data.get("description"),
-                "private": repo_data.get("private"),
-                "html_url": repo_data.get("html_url"),
-                "language": repo_data.get("language"),
-                "stargazers_count": repo_data.get("stargazers_count"),
-                "forks_count": repo_data.get("forks_count"),
-                "open_issues_count": repo_data.get("open_issues_count"),
-                "default_branch": repo_data.get("default_branch"),
-                "created_at": repo_data.get("created_at"),
-                "updated_at": repo_data.get("updated_at"),
-                "topics": repo_data.get("topics", []),
-            }, indent=2, ensure_ascii=False)
+            return json.dumps(
+                {
+                    "name": repo_data.get("name"),
+                    "full_name": repo_data.get("full_name"),
+                    "description": repo_data.get("description"),
+                    "private": repo_data.get("private"),
+                    "html_url": repo_data.get("html_url"),
+                    "language": repo_data.get("language"),
+                    "stargazers_count": repo_data.get("stargazers_count"),
+                    "forks_count": repo_data.get("forks_count"),
+                    "open_issues_count": repo_data.get("open_issues_count"),
+                    "default_branch": repo_data.get("default_branch"),
+                    "created_at": repo_data.get("created_at"),
+                    "updated_at": repo_data.get("updated_at"),
+                    "topics": repo_data.get("topics", []),
+                },
+                indent=2,
+                ensure_ascii=False,
+            )
 
     except Exception as e:
         return f"获取仓库信息出错: {str(e)}"
@@ -273,6 +289,7 @@ github_repo_detail_tool = VeIdentityFunctionTool(
 # ============================================================
 # 飞书 API 工具
 # ============================================================
+
 
 async def feishu_get_document(document_id: str, *, access_token: str) -> str:
     """
@@ -350,14 +367,16 @@ async def feishu_list_docs(*, access_token: str) -> str:
             files = data.get("data", {}).get("files", [])
             result = []
             for f in files:
-                result.append({
-                    "name": f.get("name"),
-                    "token": f.get("token"),
-                    "type": f.get("type"),
-                    "url": f.get("url"),
-                    "created_time": f.get("created_time"),
-                    "modified_time": f.get("modified_time"),
-                })
+                result.append(
+                    {
+                        "name": f.get("name"),
+                        "token": f.get("token"),
+                        "type": f.get("type"),
+                        "url": f.get("url"),
+                        "created_time": f.get("created_time"),
+                        "modified_time": f.get("modified_time"),
+                    }
+                )
 
             return json.dumps(result, indent=2, ensure_ascii=False)
 
@@ -387,7 +406,10 @@ feishu_list_tool = VeIdentityFunctionTool(
 # 凭证清理工具（用于重新触发授权）
 # ============================================================
 
-async def clean_github_state(args: dict[str, Any], *, tool_context: ToolContext) -> None:
+
+async def clean_github_state(
+    args: dict[str, Any], *, tool_context: ToolContext
+) -> None:
     """
     清理用户的 GitHub OAuth 身份凭据
 
@@ -402,7 +424,9 @@ async def clean_github_state(args: dict[str, Any], *, tool_context: ToolContext)
     return None
 
 
-async def clean_feishu_state(args: dict[str, Any], *, tool_context: ToolContext) -> None:
+async def clean_feishu_state(
+    args: dict[str, Any], *, tool_context: ToolContext
+) -> None:
     """
     清理用户的飞书 OAuth 身份凭据
 
