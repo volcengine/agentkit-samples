@@ -7,7 +7,7 @@ from google.genai.types import Content, Part
 
 if __name__ == "__main__":
     # Step 0: setup running configs
-    app_name = "tos_mcp_agent"
+    app_name = "mcp_agent"
     user_id = "agentkit_user"
     session_id = "agentkit_session"
     base_url = "http://127.0.0.1:8000"
@@ -53,6 +53,8 @@ if __name__ == "__main__":
                 print(line)
 
     async def send_request_parallel():
-        await send_request("我有哪些存储桶,列出最近使用5个存储桶")
+        await send_request(
+            "一只青蛙一次可以跳 1 级台阶，也可以跳 2 级。它要跳上一个 10 级台阶，总共有多少种跳法？如果是 n 级呢？"
+        )
 
     asyncio.run(send_request_parallel())

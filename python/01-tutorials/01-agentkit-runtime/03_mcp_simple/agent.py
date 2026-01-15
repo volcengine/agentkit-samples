@@ -1,38 +1,16 @@
-import os
-
 from agentkit.apps import AgentkitAgentServerApp
-from google.adk.tools.mcp_tool.mcp_session_manager import (
-    StreamableHTTPConnectionParams,
-)
-from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset
-from veadk import Agent, Runner
+from veadk import Agent
 from veadk.memory.short_term_memory import ShortTermMemory
-
-url = os.getenv("TOOL_TOS_URL")
-
-# Only initialize MCPToolset if URL is provided
-if url:
-    tos_mcp_runner = MCPToolset(
-        connection_params=StreamableHTTPConnectionParams(url=url, timeout=120),
-    )
-    tools = [tos_mcp_runner]
-else:
-    tools = []
+from veadk.tools.builtin_tools.mcp_router import mcp_router
 
 short_term_memory = ShortTermMemory(backend="local")
 
 root_agent = Agent(
-    name="tos_mcp_agent",
-    instruction="你是一个对象存储管理专家，精通使用MCP协议进行对象存储的各种操作。"
-    + (
-        ""
-        if tools
-        else "\n\n注意：当前未配置 TOOL_TOS_URL 环境变量，MCP 工具不可用。请设置环境变量后重启。"
-    ),
-    tools=tools,
+    name="mcp_agent",
+    instruction="你是一个具备深度推理能力的 AI 助手。当你遇到复杂逻辑、数学、编程或需要多步推理的问题时，请务必使用MCP工具辅助完成用户的问题。",
+    tools=[mcp_router],
+    model_extra_config={"extra_body": {"thinking": {"type": "disabled"}}},
 )
-
-runner = Runner(agent=root_agent)
 
 agent_server_app = AgentkitAgentServerApp(
     agent=root_agent,

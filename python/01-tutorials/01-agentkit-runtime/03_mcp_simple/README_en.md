@@ -1,17 +1,17 @@
-# MCP Simple - MCP Protocol Tool Integration Example
+# MCPSimpleAgent - MCP Protocol Tool Integration Example
 
-This is an integration example based on Volcengine VeADK and AgentKit, demonstrating how to use the MCP (Model Context Protocol) to allow an Agent to call the Volcengine TOS (Tencent Object Storage) service.
+An MCP (Model Context Protocol) integration example built on Volcengine VeADK and AgentKit, demonstrating how to call the MCP toolset via `mcp_router`.
 
 ## Overview
 
-This example shows how an Agent can integrate MCP tools to achieve intelligent management of Volcengine Object Storage (TOS).
+This example demonstrates how an Agent integrates and schedules the MCP toolset through the built-in `mcp_router` tool. The Agent is configured as an assistant with deep reasoning capabilities, capable of automatically routing to the corresponding MCP tools to complete tasks based on user intent.
 
 ## Core Features
 
 - Integrate Volcengine MCP Server as an Agent tool
-- Operate object storage through natural language (list buckets, query files, read content, etc.)
-- Use `MCPToolset` to manage tool connections and calls
-- Demonstrate a production-level tool integration pattern
+- User natural language instructions, agent calls MCP toolset to complete tasks.
+- Use MCPToolset to manage tool connections and calls
+- Demonstrate production-level tool integration patterns
 
 ## Agent Capabilities
 
@@ -23,11 +23,9 @@ AgentKit Runtime
 TOS MCP Agent
     ├── VeADK Agent (Dialogue Engine)
     ├── MCPToolset (Tool Manager)
-    │   └── Volcengine TOS MCP Server
-    │       ├── list_buckets
-    │       ├── list_objects
-    │       ├── get_object
-    │       └── ... (More TOS operations)
+    │   └── mcp_search_tool (Search Tool)
+    │   └── mcp_use_tool (Use Tool)
+    │ 
     └── ShortTermMemory (Session Memory)
 ```
 
@@ -35,34 +33,25 @@ TOS MCP Agent
 
 | Component | Description |
 | - | - |
-| **Agent Service** | [agent.py](https://github.com/volcengine/agentkit-samples/blob/main/python/01-tutorials/01-agentkit-runtime/03_mcp_simple/agent.py) - The Agent application integrating MCP tools |
-| **Test Client** | [client.py](https://github.com/volcengine/agentkit-samples/blob/main/python/01-tutorials/01-agentkit-runtime/03_mcp_simple/client.py) - SSE streaming invocation client |
-| **Project Config** | [pyproject.toml](https://github.com/volcengine/agentkit-samples/blob/main/python/01-tutorials/01-agentkit-runtime/03_mcp_simple/pyproject.toml) - Dependency management (using uv) |
-| **MCP Connection** | `MCPToolset` - Connects to the Volcengine MCP Server via HTTP |
-| **Short-Term Memory** | Local backend for storing session context |
+| **Agent Service** | [agent.py](https://github.com/volcengine/agentkit-samples/blob/main/python/01-tutorials/01-agentkit-runtime/03_mcp_simple/agent.py) - Agent application integrating MCP tools |
+| **Test Client** | [client.py](https://github.com/volcengine/agentkit-samples/blob/main/python/01-tutorials/01-agentkit-runtime/03_mcp_simple/client.py) - SSE streaming client |
+| **Project Configuration** | [pyproject.toml](https://github.com/volcengine/agentkit-samples/blob/main/python/01-tutorials/01-agentkit-runtime/03_mcp_simple/pyproject.toml) - Dependency management (uv tool) |
+| **Short Term Memory** | Local backend storage for session context |
 
-### Code Highlights
+### Code Features
 
-**MCP Tool Integration** ([agent.py](https://github.com/volcengine/agentkit-samples/blob/main/python/01-tutorials/01-agentkit-runtime/03_mcp_simple/agent.py#L8-L15)):
-
-```python
-url = os.getenv("TOOL_TOS_URL")
-
-tos_mcp_runner = MCPToolset(
-    connection_params=StreamableHTTPConnectionParams(
-        url=url,
-        timeout=120
-    ),
-)
-```
-
-**Agent Configuration** ([agent.py](https://github.com/volcengine/agentkit-samples/blob/main/python/01-tutorials/01-agentkit-runtime/03_mcp_simple/agent.py#L21-L26)):
+**Agent Configuration** ([agent.py](https://github.com/volcengine/agentkit-samples/blob/main/python/01-tutorials/01-agentkit-runtime/03_mcp_simple/agent.py#L10-L20)):
 
 ```python
 root_agent = Agent(
-    name="tos_mcp_agent",
-    instruction="You are an object storage management expert, proficient in various object storage operations using the MCP protocol.",
-    tools=[tos_mcp_runner],
+    name="mcp_agent",
+    instruction="You are an AI assistant with deep reasoning capabilities. When you encounter complex logic, mathematics, programming, or problems requiring multi-step reasoning, please make sure to use MCP tools to assist in completing user questions.",
+    tools=[mcp_router],  # Integrate MCP router tool
+    model_extra_config={
+        "extra_body": {
+            "thinking": {"type": "disabled"}
+        }
+    },
 )
 ```
 
@@ -70,277 +59,144 @@ root_agent = Agent(
 
 ```bash
 03_mcp_simple/
-├── agent.py           # Agent application entry point (with MCP integration)
-├── client.py          # Test client (SSE streaming invocation)
-├── requirements.txt   # Python dependency list (required for agentkit deployment)
+├── agent.py           # Agent application entry point
+├── client.py          # Test client
+├── requirements.txt   # Python dependency list
 ├── pyproject.toml     # Project configuration (uv dependency management)
-├── .python-version    # Python version declaration (3.12)
-├── agentkit.yaml      # AgentKit deployment configuration (auto-generated after running `agentkit config`)
-├── Dockerfile         # Docker image build file (auto-generated after running `agentkit config`)
 └── README.md          # Project documentation
 ```
 
-## Running Locally
+## Run Locally
 
 ### Prerequisites
 
-**1. Activate Volcengine Ark Model Service:**
+**1. Activate Volcengine Ark Model Service**
+- Visit [Volcengine Ark Console](https://exp.volcengine.com/ark?mode=chat) and activate the service.
 
-- Visit the [Volcengine Ark Console](https://exp.volcengine.com/ark?mode=chat)
-- Activate the model service
+**2. Get Access Credentials**
+- Refer to [User Guide](https://www.volcengine.com/docs/6291/65568?lang=zh) to get AK/SK.
 
-**2. Obtain Volcengine Access Credentials:**
+**3. Prepare MCP Service**
+- Refer to [Volcengine MCP Toolset](https://www.volcengine.com/docs/86681/1844858?lang=zh) to configure and start the MCP service, create the MCP toolset, and obtain the URL and API Key.
 
-- Refer to the [User Guide](https://www.volcengine.com/docs/6291/65568) to get your AK/SK
+### Install Dependencies
 
-**3. Get the TOS MCP Service URL:**
-
-- Visit the [Volcengine MCP Marketplace](https://www.volcengine.com/mcp-marketplace)
-- Find the [TOS MCP](https://www.volcengine.com/mcp-marketplace/detail?name=TOS%20MCP) service
-- Get the service endpoint URL (which includes a token)
-
-### Dependency Installation
-
-#### 1. Install the `uv` Package Manager
+#### 1. Install uv Package Manager
 
 ```bash
-# macOS / Linux (Official installation script)
+# macOS / Linux
 curl -LsSf https://astral.sh/uv/install.sh | sh
-
-# Or use Homebrew (macOS)
-brew install uv
 ```
 
 #### 2. Initialize Project Dependencies
 
 ```bash
-# Navigate to the project directory
 cd python/01-tutorials/01-agentkit-runtime/03_mcp_simple
-```
 
-Use the `uv` tool to install the project dependencies:
-
-```bash
-# If you don't have a `uv` virtual environment, create one first
+# Create virtual environment and install dependencies
 uv venv --python 3.12
-
-# Use `pyproject.toml` to manage dependencies
 uv sync --index-url https://pypi.tuna.tsinghua.edu.cn/simple
-
-# Activate the virtual environment
 source .venv/bin/activate
 ```
 
-### Environment Setup
+### Environment Configuration
 
 ```bash
 # Volcengine Ark Model Name
-export MODEL_AGENT_NAME=doubao-seed-1-6-251015
+export MODEL_AGENT_NAME=doubao-seed-1-8-251228
 
-# Volcengine Access Credentials (Required)
+# Volcengine Access Credentials
 export VOLCENGINE_ACCESS_KEY=<Your Access Key>
 export VOLCENGINE_SECRET_KEY=<Your Secret Key>
 
-# TOS MCP Service URL (Required)
-export TOOL_TOS_URL=https://tos.mcp.volcbiz.com/mcp?token=xxxxxx
+# Volcengine MCP Toolset Address and Access Credentials
+export TOOL_MCP_ROUTER_URL=https://*****.apigateway-cn-****.volceapi.com/mcp
+export TOOL_MCP_ROUTER_API_KEY=<Your API Key>
 ```
-
-**Note**: `TOOL_TOS_URL` must include the complete authentication token obtained from the Volcengine MCP Marketplace.
 
 ### Debugging Methods
 
-#### Method 1: Command-Line Testing (Recommended for Beginners)
+#### 1. Start Agent Service
 
 ```bash
-# Start the Agent service
 uv run agent.py
-# The service will listen on http://0.0.0.0:8000
+```
 
-# Open a new terminal and run the test client
-# You need to edit client.py and change the base_url and api_key on lines 14 and 15 to the runtime_endpoint and runtime_apikey fields generated in agentkit.yaml
+#### 2. Run Test Client
+
+```bash
+# Run client
 uv run client.py
 ```
 
-**Expected Output**:
+**Run Result Example**:
 
-```bash
-[create session] Response from server: {"session_id": "agentkit_session"}
+```text
 [run agent] Event from server:
-data: {"event":"on_agent_start",...}
-data: {"event":"on_tool_start","tool":"list_buckets"}
-data: {"event":"on_llm_chunk","data":{"content":"You have the following buckets under your current account..."}}
+[create session] Response from server: {'id': 'agentkit_session', 'appName': 'mcp_agent', 'userId': 'agentkit_user', 'state': {}, 'events': [], 'lastUpdateTime': 1768465256.520708}
+data: {"modelVersion":"doubao-seed-1-8-251228"...
+...
 ```
 
-#### Method 2: Using the VeADK Web Debugging Interface
+#### 3. Use VeADK Web Debugging
 
 ```bash
-# Go to the parent directory
 cd python/01-tutorials/01-agentkit-runtime
-
-# Start the VeADK Web interface
 veadk web
-
-# Access in your browser: http://127.0.0.1:8000
+# Visit http://127.0.0.1:8000
 ```
-
-The web interface allows you to view the MCP tool call process and results in real-time.
 
 ## AgentKit Deployment
 
-### Prerequisites
+### Cloud Deployment Process
 
-**Important**: Before running this example, please visit the [AgentKit Console Authorization Page](https://console.volcengine.com/agentkit/region:agentkit+cn-beijing/auth?projectName=default) to authorize all dependent services to ensure the example runs correctly.
+**1. Authorization and Preparation**
+Ensure that service authorization is completed in the [AgentKit Console](https://console.volcengine.com/agentkit/region:agentkit+cn-beijing/auth?projectName=default).
 
-**1. Activate Volcengine Ark Model Service:**
-
-- Visit the [Volcengine Ark Console](https://exp.volcengine.com/ark?mode=chat)
-- Activate the model service
-
-**2. Obtain Volcengine Access Credentials:**
-
-- Refer to the [User Guide](https://www.volcengine.com/docs/6291/65568) to get your AK/SK
-
-**3. Get the TOS MCP Service URL:**
-
-- Visit the [Volcengine MCP Marketplace](https://www.volcengine.com/mcp-marketplace)
-- Find the [TOS MCP](https://www.volcengine.com/mcp-marketplace/detail?name=TOS%20MCP) service
-- Get the service endpoint URL (which includes a token)
-
-### AgentKit Cloud Deployment
+**2. Deployment Commands**
 
 ```bash
 cd python/01-tutorials/01-agentkit-runtime/03_mcp_simple
 
-# Configure deployment parameters (requires setting the TOOL_TOS_URL environment variable)
+# Generate/Update configuration
 agentkit config
-
-# Launch the cloud service
+Note: Application-level runtime environment variables need to configure three environment variables: MODEL_AGENT_NAME, TOOL_MCP_ROUTER_URL, and TOOL_MCP_ROUTER_API_KEY
+# Launch cloud service
 agentkit launch
 
-# Test the deployed Agent
-agentkit invoke 'What buckets are under the current account?'
+# Command line test
+agentkit invoke 'A frog can jump 1 step or 2 steps at a time. To jump up a 10-step staircase, how many ways are there in total? What if it is n steps?'
+```
 
-# Or use client.py to connect to the cloud service
-# You need to edit client.py and change the base_url and api_key on lines 14 and 15 to the runtime_endpoint and runtime_apikey fields generated in agentkit.yaml
-# Modify client.py as needed, line 56, for the request content
+**3. Use Client to Connect to Cloud**
+Modify `base_url` and `api_key` in `client.py` to `runtime_endpoint` and `runtime_apikey` generated in `agentkit.yaml`, then run:
+
+```bash
 uv run client.py
 ```
 
-## Example Prompts
+## Technical Highlights
 
-### Query Bucket List
+### `mcp_router` Tool
 
-```text
-User: What buckets are under the current account?
-Agent: Querying the bucket list...
-      [Calling MCP tool: list_buckets]
-      You have the following buckets under your current account:
-      1. bucket-prod (Beijing region)
-      2. bucket-dev (Shanghai region)
-      3. bucket-backup (Guangzhou region)
-```
+`mcp_router` is a general MCP routing tool provided by the VeADK framework. It is not just a single tool, but a gateway capable of perceiving and distributing requests to multiple MCP Servers.
 
-### Query Object List
+- **Automatic Routing**: Automatically selects appropriate MCP tools based on user instructions.
+- **Protocol Encapsulation**: Shields underlying MCP protocol details (such as JSON-RPC message formats).
+- **Unified Interface**: The Agent only needs to interact with `mcp_router` without managing each MCP connection individually.
 
-```text
-User: What files are in bucket-prod?
-Agent: Querying the file list for bucket-prod...
-      [Calling MCP tool: list_objects]
-      bucket-prod contains the following files:
-      - data/users.csv (1.2MB)
-      - images/logo.png (156KB)
-      - files/config.txt (2KB)
-```
+### Deep Reasoning Configuration
 
-### Read File Content
-
-```text
-User: Read the content of config.txt in the files directory of bucket-prod
-Agent: Reading the file content...
-      [Calling MCP tool: get_object]
-      The content of config.txt is as follows:
-
-      [System Config]
-      version=1.0.0
-      debug=false
-      ...
-```
-
-### Complex Query
-
-```text
-User: Help me count the total number of files in all buckets
-Agent: Okay, let me count them...
-      [Calling MCP tool: list_buckets]
-      [Calling MCP tool: list_objects (multiple times)]
-      Count complete:
-      - bucket-prod: 123 files
-      - bucket-dev: 45 files
-      - bucket-backup: 78 files
-      Total: 246 files
-```
-
-## Demonstration
-
-## Technical Points
-
-### MCP Protocol Integration
-
-**What is MCP**:
-
-Model Context Protocol (MCP) is a standardized protocol for interaction between AI models and external tools/services.
-
-**Integration Method**:
-
-1. **Connection Configuration**:
+The Agent specifies `instruction` in the configuration to emphasize deep reasoning capabilities:
 
 ```python
-connection_params = StreamableHTTPConnectionParams(
-    url="https://tos.mcp.volcbiz.com/mcp?token=xxx",
-    timeout=120
-)
+instruction="You are an AI assistant with deep reasoning capabilities... please make sure to use MCP tools to assist in completing user questions."
 ```
 
-2. **Tool Registration**:
-
-```python
-tos_mcp_runner = MCPToolset(connection_params=connection_params)
-agent = Agent(tools=[tos_mcp_runner])
-```
-
-3. **Automatic Tool Discovery**: `MCPToolset` automatically discovers all tools provided by the MCP Server.
-
-### Tool Call Flow
-
-1. User inputs a natural language command.
-2. The Agent understands the user's intent.
-3. The Agent selects the appropriate MCP tool.
-4. The MCP Server is called via HTTP.
-5. The result from the tool is parsed.
-6. A natural language response is generated.
-
-### Differences from Regular Tools
-
-| Feature | Regular Tool | MCP Tool |
-| - | - | - |
-| **Definition** | Defined directly as functions in code | Provided remotely via an MCP Server |
-| **Discovery** | Requires manual registration | Automatically discovers all available tools |
-| **Extensibility** | Requires code modification | Only requires updating the MCP Server |
-| **Use Case** | Simple, local tools | Complex, remote services |
-
-### Supported Operations by Volcengine TOS MCP
-
-Common operations include:
-
-- **Bucket Management**: `list_buckets`, `head_bucket`
-- **Object Operations**: `list_objects`, `get_object`, `put_object`, `delete_object`
-- **Object Attributes**: `head_object`, `copy_object`
-- **Access Control**: `get_object_acl`, `set_object_acl`
-- **More Operations**: Refer to the [TOS API Documentation](https://www.volcengine.com/docs/tos)
+This guides the model to actively think and use external tools (via MCP) to solve problems when facing complex issues, rather than answering solely based on training data.
 
 ## FAQ
-
-None.
+None
 
 ## References
 
@@ -351,6 +207,6 @@ None.
 - [Volcengine MCP Marketplace](https://www.volcengine.com/mcp-marketplace)
 - [TOS Object Storage Documentation](https://www.volcengine.com/docs/tos)
 
-## License
+## Code License
 
-This project is licensed under the Apache 2.0 License.
+This project follows the Apache 2.0 License
